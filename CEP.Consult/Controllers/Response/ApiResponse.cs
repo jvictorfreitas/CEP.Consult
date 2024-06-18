@@ -2,11 +2,18 @@
 {
     public class ApiResponse<T>
     {
-        public string Status { get; set; }
+        public Status Status { get; set; }
         public T Data { get; set; }
         public ApiResponse() 
         {
-            Status = "NotFound";
+            Status = Status.NotFound;
         }
+    }
+
+    public enum Status
+    {
+        Success,
+        NotFound,
+        Error
     }
 }
