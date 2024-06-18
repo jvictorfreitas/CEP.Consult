@@ -15,13 +15,13 @@ namespace CEP.Consult.Services
                 string openCepUrl = $"https://opencep.com/v1/{CEP}";
                 string viaCepUrl = $"https://viacep.com.br/ws/{CEP}/json/";
 
-                List<Task<ResponseData>> taskList = new List<Task<ResponseData>>()
+                List<Task<ResponseData?>> taskList = new List<Task<ResponseData?>>()
                 {
                     RequestCEPAsync(openCepUrl, httpClient, cts.Token),
                     RequestCEPAsync(viaCepUrl, httpClient, cts.Token)
                 };
 
-                var completedTask = await Task.WhenAny(taskList);
+                var completedTask = await Task.WhenAny(taskList.FirstOrDefault(x => x.Result is not null));
 
                 cts.Cancel();
 
@@ -35,7 +35,7 @@ namespace CEP.Consult.Services
             }
         }
 
-        private static async Task<ResponseData> RequestCEPAsync(string url, HttpClient client, CancellationToken token)
+        private static async Task<ResponseData?> RequestCEPAsync(string url, HttpClient client, CancellationToken token)
         {
             HttpResponseMessage response = await client.GetAsync(url, token);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
